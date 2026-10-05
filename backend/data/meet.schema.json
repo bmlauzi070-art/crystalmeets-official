@@ -1,0 +1,200 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://crystalmeets.ie/schemas/meet.schema.json",
+  "title": "Meet",
+  "description": "Crystal Meets — canonical car-meet record. Portable JSON Schema (Draft-07) intended for use with headless CMS platforms (Sanity, Payload, Directus, Strapi, Contentful) and static-site data folders. Every field is content-only — no code, no styling, no layout concerns.",
+  "type": "object",
+  "required": [
+    "name",
+    "description",
+    "date",
+    "location_name",
+    "address",
+    "lat",
+    "lon",
+    "category"
+  ],
+  "properties": {
+    "meet_id": {
+      "type": "string",
+      "description": "Stable unique identifier. Set by the CMS or the backend on creation; do not expose to editors.",
+      "pattern": "^meet_[a-z0-9]{8,32}$",
+      "readOnly": true
+    },
+    "name": {
+      "type": "string",
+      "title": "Meet Title",
+      "minLength": 2,
+      "maxLength": 120,
+      "examples": ["Mondello Park Trackday", "Dublin Cars & Coffee — Ringsend"]
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "description": "1–3 sentences. Plain text or short markdown.",
+      "minLength": 10,
+      "maxLength": 800
+    },
+    "date": {
+      "type": "string",
+      "title": "Meet Date & Time",
+      "description": "ISO-8601 datetime in UTC (e.g. 2026-03-15T09:00:00Z).",
+      "format": "date-time"
+    },
+    "location_name": {
+      "type": "string",
+      "title": "Venue / Place Name",
+      "maxLength": 120,
+      "examples": ["Mondello Park", "Point Village, Dublin", "Salthill Promenade"]
+    },
+    "address": {
+      "type": "string",
+      "title": "Full Address",
+      "description": "Passed to Google Maps / Apple Maps for the one-click routing button.",
+      "maxLength": 240
+    },
+    "lat": {
+      "type": "number",
+      "title": "Latitude",
+      "minimum": -90,
+      "maximum": 90
+    },
+    "lon": {
+      "type": "number",
+      "title": "Longitude",
+      "minimum": -180,
+      "maximum": 180
+    },
+    "category": {
+      "type": "string",
+      "title": "Category",
+      "enum": [
+        "JDM",
+        "German",
+        "Supercars",
+        "Track",
+        "Classic",
+        "CarsCoffee",
+        "Rally",
+        "Drift",
+        "Charity"
+      ]
+    },
+    "family_friendly": {
+      "type": "boolean",
+      "title": "Family Friendly",
+      "default": false
+    },
+    "featured": {
+      "type": "boolean",
+      "title": "Featured (paid / editorial slot)",
+      "description": "Controlled by the admin. Featured meets appear in the Featured strip.",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "title": "Live Status",
+      "description": "Displayed as the coloured banner on the meet detail page.",
+      "enum": ["ACTIVE", "POSTPONED", "CONCLUDED", "CANCELLED"],
+      "default": "ACTIVE"
+    },
+    "image_url": {
+      "type": "string",
+      "title": "Preview Image",
+      "description": "Public URL — either a hosted CDN (Unsplash/Pexels/Cloudinary/CMS asset) or a path under /assets/meets/<slug>.jpg once static assets are hosted.",
+      "format": "uri"
+    },
+    "organiser": {
+      "type": "string",
+      "title": "Organiser / Club",
+      "maxLength": 120
+    },
+    "price": {
+      "type": "string",
+      "title": "Entry Price",
+      "description": "Free-form label — e.g. 'Free', '€10', '€25 · entry', '£15 spectator'.",
+      "maxLength": 40
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "created_by": {
+      "type": "string",
+      "description": "user_id of the admin who created the record.",
+      "readOnly": true
+    },
+    "from_submission": {
+      "type": "string",
+      "description": "If this meet originated from a public submission, the submission_id it was approved from.",
+      "readOnly": true
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "submission": {
+      "type": "object",
+      "title": "Public Meet Submission",
+      "description": "Draft shape for organiser submissions before admin approval. On approve, the fields below map 1:1 into a Meet record and are cleared from the pending queue.",
+      "required": [
+        "name",
+        "description",
+        "date",
+        "location_name",
+        "address",
+        "lat",
+        "lon",
+        "category",
+        "submitter_email"
+      ],
+      "properties": {
+        "submission_id": { "type": "string", "readOnly": true },
+        "name": { "$ref": "#/properties/name" },
+        "description": { "$ref": "#/properties/description" },
+        "date": { "$ref": "#/properties/date" },
+        "location_name": { "$ref": "#/properties/location_name" },
+        "address": { "$ref": "#/properties/address" },
+        "lat": { "$ref": "#/properties/lat" },
+        "lon": { "$ref": "#/properties/lon" },
+        "category": { "$ref": "#/properties/category" },
+        "family_friendly": { "$ref": "#/properties/family_friendly" },
+        "image_url": { "$ref": "#/properties/image_url" },
+        "organiser": { "$ref": "#/properties/organiser" },
+        "price": { "$ref": "#/properties/price" },
+        "submitter_email": { "type": "string", "format": "email" },
+        "submitter_name": { "type": "string", "maxLength": 120 },
+        "notes": { "type": "string", "maxLength": 500 },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "APPROVED", "REJECTED"],
+          "default": "PENDING"
+        },
+        "reviewer_note": { "type": "string" },
+        "reviewed_at": { "type": "string", "format": "date-time" },
+        "approved_meet_id": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time", "readOnly": true }
+      }
+    }
+  },
+  "$cms_hints": {
+    "sanity": {
+      "type": "document",
+      "field_group_suggestions": [
+        { "name": "core", "title": "Core", "fields": ["name", "description", "date", "category"] },
+        { "name": "location", "title": "Location", "fields": ["location_name", "address", "lat", "lon"] },
+        { "name": "media", "title": "Media", "fields": ["image_url"] },
+        { "name": "admin", "title": "Admin", "fields": ["featured", "status", "organiser", "price", "family_friendly"] }
+      ]
+    },
+    "payload": {
+      "slug": "meets",
+      "admin_use_as_title": "name",
+      "list_columns": ["name", "date", "category", "status", "featured"]
+    },
+    "directus": {
+      "collection": "meets",
+      "display_template": "{{name}} — {{location_name}}"
+    }
+  }
+}

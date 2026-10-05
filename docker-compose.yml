@@ -1,0 +1,67 @@
+# Crystal Meets — deployment configuration
+#
+# One-command local production stack. Uses only environment variables so the
+# same file works on a laptop, a VPS, Fly.io, Railway, Render, or any Docker
+# host. No secrets are hard-coded.
+#
+#   1.  Copy `.env.example` to `.env` and fill in the values you actually use.
+#   2.  `docker compose up -d --build`
+#   3.  App on http://localhost:3000 · API on http://localhost:8001
+#
+# Services:
+#   - mongo     : MongoDB 7 with a named volume for persistence
+#   - backend   : FastAPI + APScheduler (Resend reminders every 15 min)
+#   - frontend  : CRA build served by nginx
+#
+# Data:
+#   - /app/backend/data/meets.json is baked into the backend image on build.
+#     Mount it as a volume (see below) if you prefer live-editing without
+#     rebuilding.
+
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - crystalmeets_mongo:/data/db
+    ports:
+      - "127.0.0.1:27017:27017"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URL: "mongodb://mongo:27017"
+      DB_NAME: "${DB_NAME:-crystalmeets}"
+      CORS_ORIGINS: "${CORS_ORIGINS:-*}"
+      JWT_SECRET: "${JWT_SECRET}"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@crystalmeets.ie}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      FRONTEND_URL: "${FRONTEND_URL:-http://localhost:3000}"
+      RESEND_API_KEY: "${RESEND_API_KEY:-}"
+      SENDER_EMAIL: "${SENDER_EMAIL:-onboarding@resend.dev}"
+    volumes:
+      # Optional: hot-swap the seed catalog without rebuilding the image.
+      - ./backend/data:/app/data:ro
+    ports:
+      - "8001:8001"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # CRA reads REACT_APP_* at build time — must be baked in.
+        REACT_APP_BACKEND_URL: "${REACT_APP_BACKEND_URL:-http://localhost:8001}"
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  crystalmeets_mongo:

@@ -1,0 +1,155 @@
+{
+  "$schema_note": "Crystal Meets — meet catalog. Field-per-record schema for future CMS mapping (Sanity/Payload/Directus). Image URLs may point to external CDN or /assets/meets/<id>.jpg once static assets are hosted.",
+  "$fields": {
+    "name": "string (required) — display title",
+    "description": "string (required) — 1-3 sentences",
+    "date_offset_days": "int — days from today for demo seed; real records use ISO 'date' field instead",
+    "date": "ISO datetime string — canonical field for production records",
+    "hour": "int (0-23) — used with date_offset_days for demo seed",
+    "location_name": "string (required)",
+    "address": "string (required)",
+    "lat": "float (required)",
+    "lon": "float (required)",
+    "category": "enum: JDM|German|Supercars|Track|Classic|CarsCoffee|Rally|Drift|Charity",
+    "family_friendly": "bool",
+    "featured": "bool — admin controls",
+    "status": "enum: ACTIVE|POSTPONED|CONCLUDED|CANCELLED",
+    "image": "URL string — external CDN or /assets/meets/<slug>.jpg",
+    "organiser": "string",
+    "price": "string — e.g. 'Free', '€25', '€180'"
+  },
+  "meets": [
+    {
+      "name": "Mondello Park Trackday",
+      "description": "Full circuit trackday at Ireland's national motor racing venue. Novice, intermediate and advanced sessions. Bring your helmet, road cars welcome.",
+      "date_offset_days": 7, "hour": 9,
+      "location_name": "Mondello Park",
+      "address": "Mondello Park, Caragh, Naas, Co. Kildare, Ireland",
+      "lat": 53.2571, "lon": -6.7386,
+      "category": "Track", "family_friendly": false, "featured": true, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/27860938/pexels-photo-27860938.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Mondello Park", "price": "€180"
+    },
+    {
+      "name": "Dublin Cars & Coffee — Ringsend",
+      "description": "Sunday morning cars & coffee at the Point Village. Coffee vans on site, family friendly, all makes welcome.",
+      "date_offset_days": 3, "hour": 9,
+      "location_name": "Point Village, Dublin",
+      "address": "Point Village, North Wall Quay, Dublin 1",
+      "lat": 53.3475, "lon": -6.2312,
+      "category": "CarsCoffee", "family_friendly": true, "featured": true, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/33419693/pexels-photo-33419693.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Dublin C&C", "price": "Free"
+    },
+    {
+      "name": "JDM Night — Sandyford Industrial",
+      "description": "Late-night JDM meet. Skylines, Supras, Silvias, EVOs and STIs welcome. Strict no-burnout policy — bring the vibes not the heat.",
+      "date_offset_days": 5, "hour": 20,
+      "location_name": "Sandyford Industrial Estate",
+      "address": "Sandyford Business District, Dublin 18",
+      "lat": 53.2779, "lon": -6.2231,
+      "category": "JDM", "family_friendly": false, "featured": false, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/18818785/pexels-photo-18818785.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Ireland JDM", "price": "Free"
+    },
+    {
+      "name": "Killarney Historic Rally",
+      "description": "Stages weekend through the Kerry mountains. Spectator points marked. Warm clothing essential — mountain weather changes fast.",
+      "date_offset_days": 14, "hour": 8,
+      "location_name": "Killarney, Co. Kerry",
+      "address": "Killarney, Co. Kerry, Ireland",
+      "lat": 52.0599, "lon": -9.5044,
+      "category": "Rally", "family_friendly": true, "featured": false, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/27860938/pexels-photo-27860938.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Killarney & District Motor Club", "price": "€25"
+    },
+    {
+      "name": "Cork German Car Society Meet",
+      "description": "Monthly German car meet. BMW M-series, Audi RS, Porsche, Mercedes-AMG. Ballincollig Regional Park car park.",
+      "date_offset_days": 10, "hour": 14,
+      "location_name": "Ballincollig Regional Park",
+      "address": "Ballincollig, Co. Cork",
+      "lat": 51.8867, "lon": -8.5940,
+      "category": "German", "family_friendly": true, "featured": false, "status": "ACTIVE",
+      "image": "https://images.unsplash.com/photo-1577514075821-4c152f2bd5e0?crop=entropy&cs=srgb&fm=jpg&w=940",
+      "organiser": "Cork GCS", "price": "Free"
+    },
+    {
+      "name": "Charity Drive for Temple Street",
+      "description": "Convoy drive from Punchestown to Powerscourt. €20 entry per car — 100% to Temple Street Children's Hospital. All makes welcome.",
+      "date_offset_days": 21, "hour": 10,
+      "location_name": "Punchestown Racecourse",
+      "address": "Punchestown, Naas, Co. Kildare",
+      "lat": 53.1849, "lon": -6.6558,
+      "category": "Charity", "family_friendly": true, "featured": true, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/33419693/pexels-photo-33419693.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Kildare Motor Club", "price": "€20"
+    },
+    {
+      "name": "Mondello Park Drift Day",
+      "description": "Full-day drift session on the National Circuit. Novices welcome, tuition available. Tyre wall on paddock side. Spectators free.",
+      "date_offset_days": 28, "hour": 9,
+      "location_name": "Mondello Park",
+      "address": "Mondello Park, Caragh, Naas, Co. Kildare",
+      "lat": 53.2571, "lon": -6.7386,
+      "category": "Drift", "family_friendly": false, "featured": false, "status": "ACTIVE",
+      "image": "https://images.unsplash.com/photo-1577514075821-4c152f2bd5e0?crop=entropy&cs=srgb&fm=jpg&w=940",
+      "organiser": "Irish Drift Championship", "price": "€120"
+    },
+    {
+      "name": "Galway Classic & Vintage Show",
+      "description": "Salthill promenade classics show. Pre-1990 cars welcome. Trophies for Best in Show, Best Restored, and People's Choice.",
+      "date_offset_days": 35, "hour": 11,
+      "location_name": "Salthill Promenade",
+      "address": "Salthill, Galway City",
+      "lat": 53.2586, "lon": -9.0729,
+      "category": "Classic", "family_friendly": true, "featured": false, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/33419693/pexels-photo-33419693.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Galway Classic Car Club", "price": "€10"
+    },
+    {
+      "name": "Supercar Sunday — Kilternan",
+      "description": "Hypercar and supercar gathering. Ferrari, Lamborghini, McLaren, Porsche GT. Coffee on site, photographers welcome.",
+      "date_offset_days": 4, "hour": 11,
+      "location_name": "Kilternan Motor Village",
+      "address": "Kilternan, Co. Dublin",
+      "lat": 53.2222, "lon": -6.1953,
+      "category": "Supercars", "family_friendly": true, "featured": false, "status": "ACTIVE",
+      "image": "https://images.unsplash.com/photo-1577514075821-4c152f2bd5e0?crop=entropy&cs=srgb&fm=jpg&w=940",
+      "organiser": "Kilternan Supercars", "price": "Free"
+    },
+    {
+      "name": "Belfast Cars & Coffee — Titanic Quarter",
+      "description": "Cross-border C&C at the Titanic Quarter. Northern and Southern registrations welcome. Family friendly, food trucks.",
+      "date_offset_days": 6, "hour": 10,
+      "location_name": "Titanic Quarter, Belfast",
+      "address": "Queens Rd, Belfast BT3 9DT",
+      "lat": 54.6079, "lon": -5.9066,
+      "category": "CarsCoffee", "family_friendly": true, "featured": false, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/33419693/pexels-photo-33419693.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Belfast C&C", "price": "Free"
+    },
+    {
+      "name": "Waterford Rally Sprint",
+      "description": "Single-stage sprint rally at Tramore Racecourse. Great for spectators — full lap visible from the grandstand.",
+      "date_offset_days": 17, "hour": 10,
+      "location_name": "Tramore Racecourse",
+      "address": "Tramore, Co. Waterford",
+      "lat": 52.1608, "lon": -7.1481,
+      "category": "Rally", "family_friendly": true, "featured": false, "status": "POSTPONED",
+      "image": "https://images.pexels.com/photos/27860938/pexels-photo-27860938.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Waterford Motor Club", "price": "€15"
+    },
+    {
+      "name": "Limerick JDM & Euro Meet",
+      "description": "Combined JDM + Euro meet at the University of Limerick car park. Static show — no revving after 9pm please, respect the neighbours.",
+      "date_offset_days": 9, "hour": 19,
+      "location_name": "University of Limerick",
+      "address": "Castletroy, Limerick",
+      "lat": 52.6739, "lon": -8.5721,
+      "category": "JDM", "family_friendly": true, "featured": false, "status": "ACTIVE",
+      "image": "https://images.pexels.com/photos/18818785/pexels-photo-18818785.jpeg?auto=compress&cs=tinysrgb&w=940",
+      "organiser": "Limerick Auto Society", "price": "Free"
+    }
+  ]
+}

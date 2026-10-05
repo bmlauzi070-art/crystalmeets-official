@@ -1,0 +1,84 @@
+{
+  "theme": "dark",
+  "typography": {
+    "heading_font": "Barlow Condensed, sans-serif",
+    "body_font": "IBM Plex Sans, sans-serif",
+    "notes": "Use condensed, technical sans-serif for headings (like dashboard gauges) and highly legible sans-serif for body (crucial for older audience). Never use Inter for headings."
+  },
+  "colors": {
+    "base_60": "#12161A",
+    "accent_10": "#FF5722",
+    "text_30": "#FFFFFF",
+    "surface": "#1A1F24",
+    "status": {
+      "active": "#10B981",
+      "postponed": "#F59E0B",
+      "concluded": "#6B7280",
+      "cancelled": "#EF4444"
+    },
+    "notes": "Do not introduce colors outside this palette except for standard status colors. No gradients for backgrounds, keep it solid and flat with glowing accent borders. Accent #FF5722 is ONLY for intro anim, active filters, map pins, CTAs, featured badge, and hover states."
+  },
+  "visual_enhancers": {
+    "corners": "Sharp. Use rounded-none or max rounded-sm. No bubbly or highly rounded corners.",
+    "borders": "Thin 1px borders (border-white/10) on cards. Use border-[#FF5722] for active/hover states to simulate HUD targeting.",
+    "shadows": "Replace typical drop shadows with tactical glow effects: shadow-[0_0_15px_rgba(255,87,34,0.3)] for active elements.",
+    "textures": "Clean, flat HUD aesthetic. Use opacity to create depth (e.g., bg-white/5) instead of soft shadows."
+  },
+  "components": {
+    "top_bar": "Slim top bar with 'Simple View' toggle and filter tabs. Minimalist, uppercase text. Border bottom white/10.",
+    "featured_strip": "Horizontal strip beneath top bar. Must have orange glow border (border-[#FF5722]/50) and shadow. Contains 1-3 premium featured meets.",
+    "meet_card": "Compact list items. Contains event name, date/time, location, category tag, thumbnail. Sharp edges. Hover state: border becomes orange, slight scale.",
+    "map_pin": "Orange #FF5722. Sharp geometric shape (diamond or square) instead of standard teardrop. Hover: scale up + orange glow.",
+    "live_status_banner": "Small uppercase badge [ACTIVE], [POSTPONED], [CONCLUDED] using status colors. Monospace or condensed font.",
+    "routing_button": "'Open in Google Maps' button. Solid orange, sharp corners, bold uppercase text. Automotive utility feel.",
+    "weather_overlay": "Minimalist HUD style overlay in corner of meet detail or map showing winter warnings (e.g., Rain/Ice)."
+  },
+  "grids_and_layouts": {
+    "desktop": "Three-zone layout is a hero moment. Top bar (w-full, h-16). Below top bar: Featured Strip (h-16 or h-20). Below that: Flex container. Left Column 30-35% (Scrollable list of meets, compact). Right Column 65-70% (Interactive Map).",
+    "mobile": "Map-first full-screen. List acts as a swipe-up bottom sheet covering lower 40-60%. Filter collapses to icon. 'Simple View' moves to hamburger.",
+    "simple_view": "When toggled: Hides map completely. Expands list to full-width container with high-contrast, plain view. Removes all animations. Increases base text size slightly."
+  },
+  "motion": {
+    "intro_animation": "One-time session load hero moment. Under 2.5s. Tire spooling (blur), orange motion streaks, white/grey smoke expanding, then dissolving to reveal UI. Implement via Framer Motion.",
+    "hover_states": "Tactile. Slight scale and glow on map pins and buttons. Do not use 'transition: all'.",
+    "accessibility": "CRITICAL: Respect prefers-reduced-motion. Simple View must explicitly disable all motion."
+  },
+  "accessibility": {
+    "contrast": "Ensure 4.5:1 ratio minimum. Text is Supernova White on Obsidian Charcoal.",
+    "older_users": "'Simple View' mode is mandatory for older users. Needs larger tap targets and high legibility font (IBM Plex Sans).",
+    "testing": "All interactive elements MUST include a data-testid attribute in kebab-case."
+  },
+  "media_and_libraries": {
+    "map": "Use react-leaflet with a dark mode tile layer (like CartoDB Dark Matter) or apply a CSS inversion filter to standard tiles.",
+    "animation": "framer-motion for the intro sequence.",
+    "icons": "lucide-react for sharp, technical icons.",
+    "routing": "Use standard HTML 'a' tags with target='_blank' mapped to standard map intent URLs."
+  },
+  "image_urls": {
+    "jdm_night": "https://images.pexels.com/photos/18818785/pexels-photo-18818785.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "rally_dirt": "https://images.pexels.com/photos/27860938/pexels-photo-27860938.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "classic_meet": "https://images.pexels.com/photos/33419693/pexels-photo-33419693.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "drifting_smoke": "https://images.unsplash.com/photo-1577514075821-4c152f2bd5e0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDJ8MHwxfHNlYXJjaHw0fHxjYXIlMjBkcmlmdGluZyUyMHNtb2tlfGVufDB8fHx8MTc4NzU3OTAxOHww&ixlib=rb-4.1.0&q=85"
+  },
+  "instructions_to_main_agent": [
+    "Install required dependencies: framer-motion, react-leaflet, leaflet, lucide-react.",
+    "Use standard .jsx / .js files, NOT .tsx.",
+    "Setup routing for main discovery page and meet detail pages.",
+    "Implement the Layout using Flexbox or CSS Grid matching the Three-Zone desktop specs.",
+    "The Intro Animation should be built in a top-level wrapper component that overlays the app and hides itself after 2.5s.",
+    "Ensure 'Simple View' toggle updates a global state/context to radically simplify the UI, hide the map, and expand the list.",
+    "Do NOT use generic Shadcn cards if they force rounded borders—override to rounded-none or rounded-sm.",
+    "For the Map, apply this CSS filter to the leaflet tile pane to make it dark (if using standard OpenStreetMap tiles): filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);"
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Use generous spacing for list items but maintain a compact 'dashboard' density where needed.",
+    "Do not center align the app container. No generic centered layouts.",
+    "No generic AI slop gradients. Stick strictly to the defined color palette (Charcoal #12161A, Orange #FF5722, White #FFFFFF).",
+    "NEVER use fully transparent backgrounds on elements covering content. Use solid #12161A or #1A1F24.",
+    "Never use placeholder URLs for images. Use the provided image_urls.",
+    "Add transitions to specific interactive elements (hover, focus), NOT 'transition: all'.",
+    "All interactive elements MUST have a data-testid attribute.",
+    "Prioritize using pre-existing components when applicable, customizing their styles to match the HUD/dashboard aesthetic.",
+    "For toasts, use 'sonner'."
+  ]
+}

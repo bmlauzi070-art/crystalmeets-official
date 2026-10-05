@@ -1,0 +1,46 @@
+{
+  "summary": "First full E2E test of Crystal Meets. Backend: 31 pytest cases across meets listing/filters, single meet 404, register/login/me/logout, Google session error paths, admin-only CRUD (401/403/404/422), saved meets, share OG HTML, weather fallback — all 31 PASSED. Frontend: intro animation, desktop three-zone layout, filters (category/family/weekend/featured/clear), hover->pin highlight, card & pin-popup & featured-strip navigation, meet detail (live status, weather chip 'Unavailable', Google/Apple Maps hrefs, share->clipboard), auth modal (login + register), save meet, admin dashboard full CRUD (create/edit/delete verified in UI), role gating (anon 'Admin Access', user 'Admin only'), Simple View + localStorage persistence — all working. Two significant UI defects found: mobile map has zero height (blank screen) and desktop Filters popover renders behind the Leaflet map.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/weather", "issue": "Returns {label: 'Unavailable'} (Open-Meteo rate-limited from shared IP). Endpoint responds 200 with graceful fallback — accepted per instructions, not a bug."},
+      {"endpoint": "/api/auth/login", "issue": "No brute-force lockout / rate limiting: unlimited wrong-password attempts are accepted (only 401 each time)."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Discover.jsx (mobile branch) / MeetMap.jsx", "issue": "On mobile (390px) the map container resolves to height 0 -> the whole map area is blank black (no tiles, no pins visible), only featured strip + 'View Meets List' button render. Measured: meet-map bounding box {w:390,h:0}, leaflet-container {w:390,h:0}. RCA: <div className='md:hidden flex-1 relative'> collapses because ancestors lack min-h-0/explicit height while MeetMap uses h-full. Fix: give the mobile wrapper an explicit height (e.g. h-[calc(100vh-3.5rem-Xpx)]) or add min-h-0 + flex-1 chain.", "selector": "[data-testid=\"meet-map\"]", "priority": "HIGH"},
+      {"component": "TopBar Filters Popover (desktop)", "issue": "Filters dropdown is painted UNDER the Leaflet map: only the top ~150px (title + first chip row) is visible, the rest of the 478px-tall panel is hidden behind the map even though it is hit-testable. RCA: Radix PopoverContent wrapper z-index 50 vs leaflet pane z-index 400/800 (.leaflet-map-pane=400). Fix: add z-[1000] to PopoverContent (and DropdownMenuContent) or set .leaflet-pane{z-index:auto} / isolate the map container.", "selector": "[data-testid=\"filter-panel\"]", "priority": "HIGH"},
+      {"component": "Discover.jsx / MeetDetail.jsx", "issue": "Duplicate data-testids: desktop and mobile branches both mount (hidden only by CSS) -> 2x [data-testid=meet-map] (two live Leaflet instances, duplicate tile requests) and 24x meet-card-<id> for 12 meets; weather-overlay renders twice on the detail page. Makes strict selectors ambiguous and wastes resources.", "selector": "[data-testid=\"meet-map\"], [data-testid^=\"meet-card-\"], [data-testid=\"weather-overlay\"]", "priority": "MEDIUM"},
+      {"component": "Mobile Drawer / Sheet (Radix)", "issue": "Console error: 'DialogContent requires a DialogTitle for the component to be accessible for screen reader users' when opening the mobile list drawer / filters sheet.", "selector": "[data-testid=\"mobile-list-btn\"]", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Admin dashboard edit/create dialog", "issues": ["admin-date uses the browser-native datetime-local picker instead of the shadcn calendar/date component"]},
+      {"screen": "Discover (anonymous)", "issues": ["Every anonymous page load logs two 401 console errors from GET /api/auth/me — consider suppressing/expected-handling since auth is optional site-wide"]}
+    ]
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Fix mobile map height (Discover.jsx mobile branch) — map is completely invisible on phones.",
+    "Raise z-index of Radix Popover/Dropdown content above Leaflet panes so the desktop Filters panel is fully visible.",
+    "Avoid mounting both desktop and mobile layouts simultaneously (or make testids unique) to remove duplicate meet-map/meet-card/weather-overlay nodes and the second Leaflet instance.",
+    "Add DialogTitle (or VisuallyHidden title) to mobile Drawer/Sheet contents for a11y.",
+    "Consider login rate-limiting/lockout after repeated failed attempts."
+  ],
+  "critical_code_review_comments": [
+    "Discover.jsx renders MeetMap and MeetList twice (desktop + mobile branches) — two Leaflet map instances stay alive; use a breakpoint hook to render one.",
+    "server.py update_meet filters out None values, so a client can never clear an optional field (e.g. set image_url/organiser back to null); use model_dump(exclude_unset=True) instead.",
+    "No enum validation for MeetIn.category/status — arbitrary strings are accepted by POST/PUT /api/meets; use Literal/Enum.",
+    "server.py uses blocking `requests` inside async endpoints (/api/weather, /api/auth/google/session) which blocks the event loop; switch to httpx.AsyncClient.",
+    "Login endpoint has no attempt throttling; password policy is unenforced on /api/auth/register (any length accepted)."
+  ],
+  "updated_files": ["/app/backend/tests/backend_test.py"],
+  "success_rate": {"backend": "100% (31/31)", "frontend": "~88% (all flows functional; 2 high-severity layout/z-index defects)"},
+  "seed_data_creation": "Registered throwaway users TEST_user_*@example.com / TEST_ui_*@example.com; created+edited+deleted meet 'TEST_UI Meet' via admin UI and 'TEST_Meet Alpha' via API (both deleted). 12 seeded meets intact.",
+  "should_call_test_agent_after_fix": true,
+  "should_main_agent_self_test": false,
+  "test_credentials": "admin@crystalmeets.ie / AdminCrystal2026! (verified, role=admin, bcrypt hash starts with $2b$)",
+  "context_for_next_testing_agent": "Backend suite lives at /app/backend/tests/backend_test.py (run: pytest /app/backend/tests -v). Category filter testids are lowercase (cat-jdm, cat-german ...), not cat-JDM. filters-close only exists in the mobile sheet; the desktop popover closes on outside click. Weather correctly returns 'Unavailable'. Re-verify: (1) mobile map height at 390px, (2) desktop Filters popover fully visible over the map, (3) duplicate meet-map/meet-card testids removed.",
+  "rca_of_the_issue": "Mobile blank map: flex-1 wrapper in Discover.jsx has no resolved height so MeetMap's h-full computes to 0 (verified via getBoundingClientRect -> h:0). Filters panel hidden: Radix popover portal has z-index 50 while Leaflet's .leaflet-map-pane is z-index 400, so the map paints over the panel while the panel still receives pointer events (clicks worked, hence filtering logic is correct)."
+}
